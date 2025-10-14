@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from './config/database.config';
+import { PokemonModule } from './pokemon/pokemon.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { databaseConfig } from './config/database.config';
     TypeOrmModule.forRootAsync({
       useFactory: () => databaseConfig,
     }),
+    PokemonModule,
   ],
 })
 export class AppModule {}
