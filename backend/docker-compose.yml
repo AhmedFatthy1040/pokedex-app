@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: pokedex-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pokedex
+      POSTGRES_USER: pokedex
+      POSTGRES_PASSWORD: pokedex123
+    ports:
+      - '5433:5432'
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pokedex-api
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: pokedex
+      PORT: 3000
+      NODE_ENV: production
+      AUTH_TOKEN: pokemon-master-token-2024
+      POKEAPI_BASE_URL: https://pokeapi.co/api/v2
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+
+volumes:
+  postgres_data:
