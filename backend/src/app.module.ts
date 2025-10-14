@@ -6,6 +6,7 @@ import { PokemonModule } from './pokemon/pokemon.module';
 import { SearchModule } from './search/search.module';
 import { TeamModule } from './team/team.module';
 import { AuthModule } from './auth/auth.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
       useFactory: () => databaseConfig,
     }),
     AuthModule,
+    ImagesModule,
     PokemonModule,
     SearchModule,
     TeamModule,

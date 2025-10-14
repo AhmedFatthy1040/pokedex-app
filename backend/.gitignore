@@ -42,4 +42,8 @@ lerna-debug.log*
 # TypeScript
 *.tsbuildinfo
 
+# Downloaded images
+public/images/**
+!public/images/**/.gitkeep
+
 openapi.yaml

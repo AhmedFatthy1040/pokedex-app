@@ -1,7 +1,10 @@
 import { DataSource } from 'typeorm';
 import { databaseConfig } from '../config/database.config';
+import { ImagesService } from '../images/images.service';
 import * as fs from 'fs';
 import * as path from 'path';
+
+const imagesService = new ImagesService();
 
 interface PokeAPIType {
   type: {
@@ -102,6 +105,9 @@ async function importSeed() {
     let imported = 0;
 
     for (const pokemon of pokemonData) {
+      // Download sprites and get local paths
+      const localSprites = await imagesService.downloadPokemonSprites(pokemon.id, pokemon.sprites);
+
       // Transform the data to match our database schema
       const transformedPokemon = {
         id: pokemon.id,
@@ -111,7 +117,7 @@ async function importSeed() {
         order: pokemon.order,
         species: pokemon.species,
         form: pokemon.forms && pokemon.forms.length > 0 ? pokemon.forms[0] : { name: pokemon.name, url: '' },
-        sprites: pokemon.sprites,
+        sprites: localSprites, // Use local sprite paths
         types: pokemon.types,
         stats: pokemon.stats,
         abilities: pokemon.abilities,
@@ -122,7 +128,7 @@ async function importSeed() {
       imported++;
 
       if (imported % 10 === 0) {
-        console.log(`⏳ Imported ${imported}/${pokemonData.length} Pokemon...`);
+        console.log(`⏳ Imported ${imported}/${pokemonData.length} Pokemon (with sprites)...`);
       }
     }
 

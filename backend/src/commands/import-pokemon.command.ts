@@ -1,8 +1,10 @@
 import { DataSource } from 'typeorm';
 import { databaseConfig } from '../config/database.config';
 import axios from 'axios';
+import { ImagesService } from '../images/images.service';
 
 const POKEAPI_BASE_URL = 'https://pokeapi.co/api/v2';
+const imagesService = new ImagesService();
 
 interface PokeAPIResponse {
   id: number;
@@ -42,6 +44,11 @@ async function importPokemon(idOrName: string) {
     const pokemon = response.data;
     console.log(`📦 Found Pokemon: ${pokemon.name} (ID: ${pokemon.id})`);
 
+    // Download sprites and get local paths
+    console.log('📥 Downloading sprites...');
+    const localSprites = await imagesService.downloadPokemonSprites(pokemon.id, pokemon.sprites);
+    console.log('✅ Sprites downloaded');
+
     // Transform the data to match our database schema
     const transformedPokemon = {
       id: pokemon.id,
@@ -51,7 +58,7 @@ async function importPokemon(idOrName: string) {
       order: pokemon.order,
       species: pokemon.species,
       form: pokemon.forms && pokemon.forms.length > 0 ? pokemon.forms[0] : { name: pokemon.name, url: '' },
-      sprites: pokemon.sprites,
+      sprites: localSprites, // Use local sprite paths
       types: pokemon.types,
       stats: pokemon.stats,
       abilities: pokemon.abilities,
