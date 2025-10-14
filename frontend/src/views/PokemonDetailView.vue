@@ -50,7 +50,8 @@
             <img
               :src="getImageUrl(pokemon.sprites.front_default)"
               :alt="pokemon.name"
-              class="w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-2xl"
+              class="w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-2xl cursor-pointer hover:scale-105 transition-transform"
+              @click="openLightbox"
             />
             
             <!-- Favorite Button -->
@@ -178,6 +179,13 @@
         </div>
       </div>
     </div>
+
+    <!-- Image Lightbox -->
+    <ImageLightbox
+      v-model:show="showLightbox"
+      :image-src="lightboxImageSrc"
+      :image-alt="pokemon?.name"
+    />
   </div>
 </template>
 
@@ -185,6 +193,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
+import ImageLightbox from '@/components/ImageLightbox.vue'
 import { usePokemonStore, useFavoritesStore } from '@/stores'
 import type { Pokemon } from '@/types/pokemon'
 
@@ -195,6 +204,8 @@ const favoritesStore = useFavoritesStore()
 const pokemon = ref<Pokemon | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const showLightbox = ref(false)
+const lightboxImageSrc = ref('')
 
 const isFavorite = computed(() => {
   if (!pokemon.value) return false
@@ -220,6 +231,13 @@ const levelUpMoves = computed(() => {
 const toggleFavorite = () => {
   if (pokemon.value) {
     favoritesStore.toggleFavorite(pokemon.value.id)
+  }
+}
+
+const openLightbox = () => {
+  if (pokemon.value) {
+    lightboxImageSrc.value = getImageUrl(pokemon.value.sprites.front_default)
+    showLightbox.value = true
   }
 }
 
