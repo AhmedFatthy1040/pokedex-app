@@ -1,23 +1,34 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      name: 'pokedex',
+      component: () => import('../views/PokedexView.vue'),
+      meta: { title: 'Pokédex' },
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      path: '/pokemon/:id',
+      name: 'pokemon-detail',
+      component: () => import('../views/PokemonDetailView.vue'),
+      meta: { title: 'Pokemon Detail' },
+    },
+    {
+      path: '/favorites',
+      name: 'favorites',
+      component: () => import('../views/FavoritesView.vue'),
+      meta: { title: 'Favorites' },
     },
   ],
 })
 
+// Update page title based on route meta
+router.beforeEach((to, from, next) => {
+  document.title = (to.meta.title as string) || 'Pokédex'
+  next()
+})
+
 export default router
+
