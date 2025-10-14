@@ -23,7 +23,15 @@ async function bootstrap() {
     .setTitle('Pokedex API')
     .setDescription('Pokemon REST API - Original 151 Pokemon')
     .setVersion('1.0.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'Token',
+        description: 'Enter your bearer token (e.g., pokemon-master-token-2024)',
+      },
+      'bearer',
+    )
     .addServer('http://localhost:3000/', 'Local Development')
     .build();
 

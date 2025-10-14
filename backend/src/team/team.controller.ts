@@ -1,11 +1,14 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { TeamService } from './team.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { SetPokemonsDto } from './dto/set-pokemons.dto';
 import { TeamDto } from './dto/team.dto';
+import { BearerAuthGuard } from '../auth/bearer-auth.guard';
 
 @ApiTags('Teams')
+@ApiBearerAuth()
+@UseGuards(BearerAuthGuard)
 @Controller('api/v1/teams')
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}

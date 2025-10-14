@@ -5,6 +5,7 @@ import { databaseConfig } from './config/database.config';
 import { PokemonModule } from './pokemon/pokemon.module';
 import { SearchModule } from './search/search.module';
 import { TeamModule } from './team/team.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TeamModule } from './team/team.module';
     TypeOrmModule.forRootAsync({
       useFactory: () => databaseConfig,
     }),
+    AuthModule,
     PokemonModule,
     SearchModule,
     TeamModule,
