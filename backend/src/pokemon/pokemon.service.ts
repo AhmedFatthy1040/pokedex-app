@@ -91,7 +91,7 @@ export class PokemonService {
       sprites: {
         front_default: pokemon.sprites?.front_default || null,
       },
-      types: pokemon.types || [],
+      types: this.transformTypesForList(pokemon.types),
     };
   }
 
@@ -120,6 +120,16 @@ export class PokemonService {
       abilities: this.transformAbilities(pokemon.abilities),
       form: pokemon.form,
     };
+  }
+
+  private transformTypesForList(types: any[]): any[] {
+    if (!types || !Array.isArray(types)) return [];
+    return types.map((t) => ({
+      type: {
+        name: typeof t.type === 'object' ? t.type.name : t.type,
+      },
+      slot: t.slot,
+    }));
   }
 
   private transformTypes(types: any[]): any[] {
