@@ -811,6 +811,13 @@ MIT License - feel free to use this project for learning and development.
 
 ## 📸 Screenshots
 
+<img width="1591" height="891" alt="Screenshot from 2025-10-14 17-04-50" src="https://github.com/user-attachments/assets/e2ba9fed-4dec-405a-b676-9d522e994513" />
+
+<img width="1591" height="891" alt="Screenshot from 2025-10-14 17-04-36" src="https://github.com/user-attachments/assets/41f30f43-d48a-4eeb-9090-0fa98435d16c" />
+
+<img width="1309" height="888" alt="Screenshot from 2025-10-14 17-04-04" src="https://github.com/user-attachments/assets/e308d0ca-e697-4e80-9dc9-edb5f72a6d35" />
+
+
 ### Desktop View
 - Main Pokédex list with search and sort
 - Detailed Pokémon view with stats and abilities
@@ -824,6 +831,6 @@ MIT License - feel free to use this project for learning and development.
 
 ---
 
-**Built with ❤️ using Vue 3, NestJS, and TypeScript**
+**Built using Vue 3, NestJS, and TypeScript**
 
 **Happy Coding! 🚀**
