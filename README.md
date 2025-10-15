@@ -82,7 +82,7 @@ npm install
 cp .env.example .env
 
 # Start PostgreSQL (using Docker)
-docker-compose up -d postgres
+docker compose up -d postgres
 
 # Run migrations
 npm run migration:run
