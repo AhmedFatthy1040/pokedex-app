@@ -2,6 +2,35 @@
   <div class="min-h-screen bg-white pb-20 md:pb-6">
     <AppHeader :title="pokemon ? pokemon.name : 'Loading...'" />
     
+    <!-- Navigation Buttons -->
+    <div v-if="!loading && !error && pokemon" class="fixed top-1/2 left-0 right-0 transform -translate-y-1/2 z-10 pointer-events-none">
+      <div class="max-w-7xl mx-auto px-4 flex justify-between">
+        <!-- Previous Button -->
+        <button
+          v-if="hasPrevious"
+          @click="navigateToPrevious"
+          class="pointer-events-auto p-3 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-button-primary"
+          aria-label="Previous Pokemon"
+        >
+          <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        
+        <!-- Next Button -->
+        <button
+          v-if="hasNext"
+          @click="navigateToNext"
+          class="pointer-events-auto p-3 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full shadow-lg transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-button-primary ml-auto"
+          aria-label="Next Pokemon"
+        >
+          <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    
     <!-- Loading State -->
     <div v-if="loading" class="animate-pulse">
       <div class="h-80 bg-gray-300"></div>
@@ -190,14 +219,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
 import ImageLightbox from '@/components/ImageLightbox.vue'
 import { usePokemonStore, useFavoritesStore } from '@/stores'
 import type { Pokemon } from '@/types/pokemon'
 
 const route = useRoute()
+const router = useRouter()
 const pokemonStore = usePokemonStore()
 const favoritesStore = useFavoritesStore()
 
@@ -211,6 +241,48 @@ const isFavorite = computed(() => {
   if (!pokemon.value) return false
   return favoritesStore.isFavorite(pokemon.value.id)
 })
+
+// Carousel navigation
+const currentPokemonIndex = computed(() => {
+  if (!pokemon.value || pokemonStore.filteredPokemons.length === 0) return -1
+  return pokemonStore.filteredPokemons.findIndex(p => p.id === pokemon.value!.id)
+})
+
+const hasPrevious = computed(() => {
+  return currentPokemonIndex.value > 0
+})
+
+const hasNext = computed(() => {
+  return currentPokemonIndex.value >= 0 && 
+         currentPokemonIndex.value < pokemonStore.filteredPokemons.length - 1
+})
+
+const navigateToPrevious = () => {
+  if (hasPrevious.value) {
+    const previousPokemon = pokemonStore.filteredPokemons[currentPokemonIndex.value - 1]
+    router.push({ name: 'pokemon-detail', params: { id: previousPokemon.id } })
+  }
+}
+
+const navigateToNext = () => {
+  if (hasNext.value) {
+    const nextPokemon = pokemonStore.filteredPokemons[currentPokemonIndex.value + 1]
+    router.push({ name: 'pokemon-detail', params: { id: nextPokemon.id } })
+  }
+}
+
+// Keyboard navigation
+const handleKeydown = (event: KeyboardEvent) => {
+  if (showLightbox.value) return // Don't navigate if lightbox is open
+  
+  if (event.key === 'ArrowLeft') {
+    event.preventDefault()
+    navigateToPrevious()
+  } else if (event.key === 'ArrowRight') {
+    event.preventDefault()
+    navigateToNext()
+  }
+}
 
 const levelUpMoves = computed(() => {
   if (!pokemon.value) return []
@@ -337,6 +409,21 @@ const getStatColor = (value: number): string => {
 }
 
 onMounted(() => {
+  loadPokemon()
+  window.addEventListener('keydown', handleKeydown)
+  
+  // Ensure Pokemon list is loaded for navigation
+  if (pokemonStore.pokemons.length === 0) {
+    pokemonStore.fetchPokemons()
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+})
+
+// Watch for route changes to load new Pokemon
+watch(() => route.params.id, () => {
   loadPokemon()
 })
 </script>
