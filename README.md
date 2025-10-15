@@ -87,6 +87,9 @@ docker compose up -d postgres
 # Run migrations
 npm run migration:run
 
+# Add pokemons.json file to app/data/ folder
+# (Required for seeding - contains all 151 Pokémon data)
+
 # Seed database with all 151 Pokémon
 npm run seed
 
@@ -142,16 +145,23 @@ docker-compose up -d postgres
 npm run migration:run
 ```
 
-6. **Seed database with Pokemon data:**
+6. **Add Pokémon data file:**
+```bash
+# Make sure pokemons.json is in app/data/ folder
+# This file contains all 151 Pokémon data required for seeding
+# If missing, the seed command will fail
+```
+
+7. **Seed database with Pokemon data:**
 ```bash
 npm run seed
 # This will:
-# - Import all 151 Pokemon from pokemons.json
+# - Import all 151 Pokemon from app/data/pokemons.json
 # - Download sprite images locally to public/images/pokemon/
 # - May take a few minutes to download all images
 ```
 
-7. **Start the application:**
+8. **Start the application:**
 ```bash
 npm run start:dev
 ```
@@ -388,8 +398,9 @@ npm run migration:revert    # Revert last migration
 
 #### Data Import
 ```bash
-npm run seed                    # Import all 151 Pokémon from pokemons.json
+npm run seed                    # Import all 151 Pokémon from app/data/pokemons.json
                                 # Downloads all sprite images automatically
+                                # Note: Requires pokemons.json in app/data/ folder
                                 
 npm run import:pokemon 25       # Import Pikachu from PokeAPI
 npm run import:pokemon pikachu  # Import by name
@@ -693,6 +704,12 @@ curl -I http://localhost:3000/images/pokemon/1-front_default.png
 
 #### Import Command Fails
 ```bash
+# Check if pokemons.json exists in app/data/
+ls -la app/data/pokemons.json
+
+# If missing, ensure the file is in the correct location
+# The file should contain all 151 Pokémon data in JSON format
+
 # Check PokeAPI connectivity
 curl https://pokeapi.co/api/v2/pokemon/1
 
